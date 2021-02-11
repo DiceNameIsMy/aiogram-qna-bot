@@ -1,3 +1,4 @@
 env/
 UserData.db/
 app/token_file.py
+__pycache__/
