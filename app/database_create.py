@@ -12,7 +12,7 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS questions
 
 cursor.execute("""CREATE TABLE IF NOT EXISTS answers
     (_id INTEGER PRIMARY KEY,
-    author VARCHAR(9),
+    author_id VARCHAR(9),
     question_id INTEGER,
     answer VARCHAR(256))
 """)    

@@ -53,8 +53,8 @@ async def send_welcome(message: types.Message):
 
 
 # возврат в меню
-@dp.message_handler(lambda message: message.text == main_t['back'], state=StateMachine.all())
-async def go_back(message: main_t['back']):
+@dp.message_handler(lambda message: message.text == main_text['back'], state=StateMachine.all())
+async def go_back(message: main_text['back']):
     state = dp.current_state(user=message.from_user.id)
     try:
         question_id = temporary.pop(message.from_user.id)
@@ -65,8 +65,8 @@ async def go_back(message: main_t['back']):
 
 
 # задать вопрос
-@dp.message_handler(lambda message: message.text == main_t['ask'])
-async def ask_question(message: main_t['ask']):
+@dp.message_handler(lambda message: message.text == main_text['ask'])
+async def ask_question(message: main_text['ask']):
     state = dp.current_state(user=message.from_user.id)
     await message.answer("Напишите свой вопрос:", reply_markup=kb.ReplyKeyboardRemove())
     print(StateMachine.all()[1])
@@ -74,8 +74,8 @@ async def ask_question(message: main_t['ask']):
 
 
 # запросить вопрос
-@dp.message_handler(lambda message: message.text == main_t['req'])
-async def req_question(message: main_t['req']):
+@dp.message_handler(lambda message: message.text == main_text['req'])
+async def req_question(message: main_text['req']):
     state = dp.current_state(user=message.from_user.id)
     question = db_conn.ask_question()
     temporary[message.from_user.id] = question[0]
@@ -93,7 +93,7 @@ async def input_answer(message: types.Message):
     state = dp.current_state(user=message.from_user.id)
     question_id = temporary.pop(message.from_user.id)
 
-    db_conn.insert_answer(question_id=question_id, answer=message.text)
+    db_conn.insert_answer(author_id=message.from_user.id, question_id=question_id, answer=message.text)
 
     await message.answer('Ваш ответ получен.',
                          reply_markup=kb.markupGameInProcess)
@@ -101,8 +101,8 @@ async def input_answer(message: types.Message):
     # нужно подключить к бд
 
 
-@dp.message_handler(lambda message: message.text == main_t['cont'], state=StateMachine.all()[3])
-async def next_question(message: main_t['cont']):
+@dp.message_handler(lambda message: message.text == main_text['cont'], state=StateMachine.all()[3])
+async def next_question(message: main_text['cont']):
     state = dp.current_state(user=message.from_user.id)
     question = db_conn.ask_question()
     temporary[message.from_user.id] = question[0]
@@ -112,8 +112,8 @@ async def next_question(message: main_t['cont']):
     await state.set_state(StateMachine.all()[0])
 
 # мои вопросы
-@dp.message_handler(lambda message: message.text == main_t['my_q'])
-async def my_questions(message: main_t['my_q']):
+@dp.message_handler(lambda message: message.text == main_text['my_q'])
+async def my_questions(message: main_text['my_q']):
     state = dp.current_state(user=message.from_user.id)
     data = db_conn.return_questions(user_id=message.from_user.id)
 
@@ -123,7 +123,7 @@ async def my_questions(message: main_t['my_q']):
 
 # добавить в мои вопросы
 @dp.message_handler(state=StateMachine.all()[2])
-async def add_question(message: manage_t['add']):
+async def add_question(message: manage_text['add']):
     state = dp.current_state(user=message.from_user.id)
     await message.answer("Напишите свой вопрос:", reply_markup=kb.ReplyKeyboardRemove())
     print(StateMachine.all()[1])
